@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">Stove Ordering Android App</string>
+    <string name="welcome_splash_screen_text">
+Discover delicious meals from your favorite restaurants.
+Order and enjoy with just a few taps!</string>
+    <string name="order_splash_screen_text">Hungry? Satisfy your cravings with our food ordering app! Choose from a wide selection of delicious meals from your favorite restaurants. Order now and enjoy in the comfort of your own home!</string>
+    <string name="order_splash_screen_title">Order for Food</string>
+    <string name="next_button_text">Next</string>
+    <string name="order_image_des">Splash Screen Image</string>
+    <string name="payment_image_des">Payment Image</string>
+    <string name="payment_splash_screen_title">Easy Payment</string>
+    <string name="delivery_image_des">Delivery Truck</string>
+    <string name="delivery_splash_screen_title">Fast Delivery</string>
+    <string name="payment_splash_screen_text">Making a payment on this app is easy and convenient. Simply select the item or service you want to purchase and choose a payment method. Follow the prompts to complete the transaction in just a few clicks or taps.</string>
+    <string name="delivery_splash_screen_text">Our delivery service is fast and reliable. We use advanced logistics and tracking systems to ensure that your order arrives on time. With our speedy delivery service, you can expect to receive your items in no time at all.</string>
+    <string name="login_button_text">Get in</string>
+    <string name="register_text">Register / Login</string>
+    <string name="register_login_text">Let\'s You in</string>
+    <string name="facebook_text">Continue With Facebook</string>
+    <string name="google_text">Continue With Google</string>
+    <string name="apple_text">Continue With Apple</string>
+    <string name="apple_image_text">Apple Logo</string>
+    <string name="facebook_image_text">Facebook logo</string>
+    <string name="google_image_text">Google logo</string>
+    <string name="or_text">OR</string>
+    <string name="signin_email">Sign in with your Email</string>
+    <string name="creeate_account">Create New Account</string>
+    <string name="or_continue">or continue with</string>
+    <string name="empty">" "</string>
 </resources>
