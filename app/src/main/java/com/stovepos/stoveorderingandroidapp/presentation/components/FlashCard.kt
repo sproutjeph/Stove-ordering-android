@@ -30,7 +30,7 @@ fun FlashCard(
             .height(150.dp)
             .padding(horizontal =  16.dp, vertical = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.Green.copy(alpha = 0.4f),
+
         )
 
 

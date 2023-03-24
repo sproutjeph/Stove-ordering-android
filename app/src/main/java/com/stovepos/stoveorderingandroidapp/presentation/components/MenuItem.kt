@@ -11,12 +11,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.stovepos.stoveorderingandroidapp.R
+import com.stovepos.stoveorderingandroidapp.ui.theme.HumorousColor
 
 @Preview(showBackground = true)
 @Composable
@@ -33,7 +35,7 @@ fun MenuItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(horizontal =  16.dp, vertical = 8.dp)
             .background(color = MaterialTheme.colorScheme.surface)
             .clickable {
                 onMenuItemClicked()
@@ -83,8 +85,8 @@ fun MenuItem(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Price: $$itemPrice",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.tertiary
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary
                 )
 
                 Row(
@@ -95,17 +97,19 @@ fun MenuItem(
                     Icon(
                         imageVector = Icons.Filled.Star,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = HumorousColor
+
                     )
                     Icon(
                         imageVector = Icons.Filled.Star,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = HumorousColor
+
 
                     )
                     Icon(imageVector = Icons.Filled.Star,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = HumorousColor
                     )
                     Icon(imageVector = Icons.Filled.Star, contentDescription = null)
 

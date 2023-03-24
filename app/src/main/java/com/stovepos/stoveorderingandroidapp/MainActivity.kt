@@ -22,7 +22,8 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 SetupNavigation(
                     startDestination = getStartDestination(),
-                    navController = navController
+                    navController = navController,
+
                 )
 
             }

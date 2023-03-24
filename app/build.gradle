@@ -83,8 +83,8 @@ dependencies {
 
 
     // MongoDB Realm
-//    implementation 'io.realm.kotlin:library-base:1.6.1'
-    implementation "io.realm.kotlin:library-sync:1.4.0"
+    implementation 'io.realm.kotlin:library-base:1.6.1'
+    implementation "io.realm.kotlin:library-sync:1.6.0"
 
 
 

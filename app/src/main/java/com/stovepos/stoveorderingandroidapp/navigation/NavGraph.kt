@@ -40,7 +40,8 @@ fun SetupNavigation(
             navigateToNextSplashScreen = {
                 navController.navigate(Screen.WelcomeSplash.route)
 
-            }
+            },
+
         )
 
         welcomeSplashRoute(
@@ -77,7 +78,7 @@ fun SetupNavigation(
             navigateToHome = {
                 navController.popBackStack()
                 navController.navigate(Screen.Home.route)
-            }
+            },
         )
         authWithEmail(
             onBackButtonClicked = {
@@ -99,10 +100,14 @@ fun SetupNavigation(
 
 
 fun NavGraphBuilder.logoSplashRoute(
-    navigateToNextSplashScreen: () -> Unit
+    navigateToNextSplashScreen: () -> Unit,
+
 ){
     composable(route = Screen.LogoSplash.route){
-        LogoSplashScreen(navigateToNextSplashScreen = navigateToNextSplashScreen)
+
+        LogoSplashScreen(
+            navigateToNextSplashScreen = navigateToNextSplashScreen,
+        )
 
     }
 }
@@ -167,7 +172,7 @@ fun NavGraphBuilder.deliverySplashRoute(
 fun NavGraphBuilder.authenticationRoute(
     onBackButtonClicked: () -> Unit,
     navigateToAuthWithEmail: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
 ){
     composable(route = Screen.Authentication.route){
         val authenticationViewModel: AuthenticationViewModel = viewModel()
@@ -175,6 +180,8 @@ fun NavGraphBuilder.authenticationRoute(
         val loadingState by authenticationViewModel.loadingState
         val oneTapState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
+
+
         AuthenticationScreen(
             authenticated = authenticated,
             loadingState = loadingState,

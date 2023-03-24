@@ -1,6 +1,8 @@
 package com.stovepos.stoveorderingandroidapp.presentation.screens.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,7 +26,7 @@ import com.stovepos.stoveorderingandroidapp.presentation.components.*
 
 
 //@Preview(showBackground = true)
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     drawerState: DrawerState,
@@ -52,41 +54,49 @@ fun HomeScreen(
             }
         ) {contentPadding->
 
-
-            Column(
-                modifier = Modifier
-                    .padding(contentPadding)
-            ){
-
-                FlashCard(
-                    restaurantName = "Restaurant"
-
-                )
-                Divider()
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                LazyColumn(
                     modifier = Modifier
-                        .padding(vertical = 4.dp)
+                        .padding(contentPadding)
                 ){
 
-                    item { MenuCategoryButton() }
+                    item{
+                        FlashCard(restaurantName = "Restaurant")
+                    }
 
-                    item{ MenuCategoryButton(text ="Burger") }
+                    stickyHeader{
+                       MenuCategoryButtonRow()
+                    }
 
-                }
-                Divider()
 
-                LazyColumn(){
 
-//                    item{
-//                        if(menuState.isLoading){
-//                            CircularProgressIndicator(
-//                                modifier = Modifier
-//
-//                            )
-//                        }
-//                    }
 
+                    item{
+                        MenuItem(
+                            itemName = "Vegetarian Noodles",
+                            itemPrice = "12.00",
+                            itemDesc = "Vegetarian noodles are a tasty and satisfying meal"
+                        ){
+                        }
+
+                    }
+                    item{
+                        MenuItem(
+                            itemName = "Vegetarian Noodles",
+                            itemPrice = "12.00",
+                            itemDesc = "Vegetarian noodles are a tasty and satisfying meal"
+                        ){
+                        }
+
+                    }
+                    item{
+                        MenuItem(
+                            itemName = "Vegetarian Noodles",
+                            itemPrice = "12.00",
+                            itemDesc = "Vegetarian noodles are a tasty and satisfying meal"
+                        ){
+                        }
+
+                    }
 
                     item{
                         MenuItem(
@@ -99,7 +109,6 @@ fun HomeScreen(
                     }
 
                 }
-            }
 
         }
     }
@@ -228,6 +237,36 @@ fun NavigationDrawer(
 
 
 @Composable
-fun CustomNavItem() {
-    
+fun MenuCategoryButtonRow(
+
+) {
+    Surface(
+        modifier = Modifier
+            .padding(horizontal =  16.dp,),
+        shape =  Shapes().medium,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        tonalElevation = 1.dp
+
+
+    ) {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ){
+
+            item {
+                MenuCategoryButton(backgroundColor = MaterialTheme.colorScheme.primary,
+                    textColor = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
+            item{ MenuCategoryButton(text ="Burger") }
+
+        }
+    }
+
+
+
 }
