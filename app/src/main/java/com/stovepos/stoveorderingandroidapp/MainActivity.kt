@@ -10,8 +10,10 @@ import com.stovepos.stoveorderingandroidapp.navigation.Screen
 import com.stovepos.stoveorderingandroidapp.navigation.SetupNavigation
 import com.stovepos.stoveorderingandroidapp.ui.theme.StoveOrderingAndroidAppTheme
 import com.stovepos.stoveorderingandroidapp.utils.Constants.APP_ID
+import dagger.hilt.android.AndroidEntryPoint
 import io.realm.kotlin.mongodb.App
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

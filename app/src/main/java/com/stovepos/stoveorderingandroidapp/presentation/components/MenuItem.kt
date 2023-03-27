@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.stovepos.stoveorderingandroidapp.R
 import com.stovepos.stoveorderingandroidapp.ui.theme.HumorousColor
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
 fun MenuItem(
     imageId: Int = R.drawable.item_image,

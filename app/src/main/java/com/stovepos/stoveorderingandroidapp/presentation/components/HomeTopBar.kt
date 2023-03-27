@@ -1,6 +1,5 @@
 package com.stovepos.stoveorderingandroidapp.presentation.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,13 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.stovepos.stoveorderingandroidapp.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.stovepos.stoveorderingandroidapp.utils.Constants.APP_ID
+import io.realm.kotlin.mongodb.App
+import io.realm.kotlin.mongodb.ext.profileAsBsonDocument
 
 
 @Preview(showBackground = true)
@@ -27,6 +30,9 @@ import androidx.compose.material3.Text
 fun HomeScreenTopBar(
     onProfileClicked: ()-> Unit = {}
 ) {
+          val userData = App.create(APP_ID).currentUser?.profileAsBsonDocument()
+
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,14 +50,16 @@ fun HomeScreenTopBar(
 
             ){
 
-            Image(
-                painter = painterResource(id = R.drawable.photo_placeholder),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(userData?.getString("picture")?.value)
+                    .build(),
+                contentDescription = "User Image",
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(45.dp)
                     .clip(shape = RoundedCornerShape(50))
-                    .clickable{onProfileClicked.invoke()}
+                    .clickable { onProfileClicked.invoke() },
+                contentScale = ContentScale.Crop,
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -64,11 +72,13 @@ fun HomeScreenTopBar(
                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
 
                 )
-                Text(
-                    text = "Jephthah",
-                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                userData?.getString("name")?.value?.let {
+                    Text(
+                        text = it,
+                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
 
-                    )
+                        )
+                }
 
             }
 
@@ -84,7 +94,7 @@ fun HomeScreenTopBar(
 
             Box(
                 modifier = Modifier
-                    .size(45.dp)
+                    .size(40.dp)
                     .clip(shape = RoundedCornerShape(50))
                     .border(
                         width = 1.dp,
@@ -112,7 +122,7 @@ fun HomeScreenTopBar(
 
             Box(
                 modifier = Modifier
-                    .size(45.dp)
+                    .size(40.dp)
                     .clip(shape = RoundedCornerShape(50))
                     .border(
                         width = 1.dp,

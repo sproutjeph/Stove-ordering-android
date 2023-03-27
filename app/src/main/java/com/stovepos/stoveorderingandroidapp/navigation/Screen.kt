@@ -9,5 +9,10 @@ sealed class Screen(val route: String){
     object PaymentSplash: Screen("payment_splash_screen")
     object DeliverySplash: Screen("delivery_splash_screen")
     object Home: Screen("home_screen")
+    object ItemDetails: Screen("item_details_screen?itemId={itemId}"){
+        fun passItemId(itemId: String): String{
+            return "item_details_screen?itemId=$itemId"
+        }
+    }
 
 }

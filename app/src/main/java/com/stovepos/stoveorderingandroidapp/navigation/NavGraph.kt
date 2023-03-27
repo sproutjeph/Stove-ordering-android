@@ -1,5 +1,6 @@
 package com.stovepos.stoveorderingandroidapp.navigation
 
+import android.util.Log
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.*
@@ -7,8 +8,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 import com.stovepos.stoveorderingandroidapp.R
@@ -18,6 +21,7 @@ import com.stovepos.stoveorderingandroidapp.presentation.screens.authentication.
 import com.stovepos.stoveorderingandroidapp.presentation.screens.authentication.AuthWithEmailScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.authentication.AuthenticationViewModel
 import com.stovepos.stoveorderingandroidapp.presentation.screens.home.HomeScreen
+import com.stovepos.stoveorderingandroidapp.presentation.screens.item_details.ItemDetailsScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.splash_screens.LogoSplashScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.splash_screens.WelcomeSplashScreen
 import com.stovepos.stoveorderingandroidapp.utils.Constants.APP_ID
@@ -90,6 +94,15 @@ fun SetupNavigation(
             navigateToAuth = {
                 navController.popBackStack()
                 navController.navigate(Screen.Authentication.route)
+            },
+            navigateToItemDetails = {
+                navController.navigate(Screen.ItemDetails.passItemId(itemId = it))
+            }
+        )
+
+        itemDetailRoute(
+            onBackPressed = {
+                navController.popBackStack()
             }
         )
     }
@@ -236,7 +249,7 @@ fun NavGraphBuilder.authWithEmail(
 
 fun NavGraphBuilder.homeRoute(
     navigateToAuth: () -> Unit,
-
+    navigateToItemDetails: (String) -> Unit,
     ){
     composable(route = Screen.Home.route){
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -252,7 +265,8 @@ fun NavGraphBuilder.homeRoute(
             },
             onSignOutClicked = {
                 signOutDialogOpened = true
-            }
+            },
+            navigateToItemDetails = navigateToItemDetails
 
         )
 
@@ -275,4 +289,26 @@ fun NavGraphBuilder.homeRoute(
         )
 
     }
+}
+
+
+fun NavGraphBuilder.itemDetailRoute(
+    onBackPressed: ()-> Unit
+
+) {
+    composable(
+        route = Screen.ItemDetails.route,
+        arguments = listOf(navArgument(name = "itemId"){
+            type = NavType.StringType
+
+        })
+    ) {
+        val itemId = it.arguments?.getString("itemId")
+            ItemDetailsScreen(
+                itemId = itemId ?: "null",
+                onBackPressed = onBackPressed
+            )
+
+    }
+
 }
