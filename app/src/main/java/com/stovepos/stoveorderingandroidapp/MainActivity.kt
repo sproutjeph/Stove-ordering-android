@@ -35,6 +35,6 @@ class MainActivity : ComponentActivity() {
 
 private fun getStartDestination(): String{
       val user = App.create(APP_ID).currentUser
-      return if(user != null && user.loggedIn)  Screen.Home.route else Screen.LogoSplash.route
+      return if((user != null) && user.loggedIn)  Screen.Home.route else Screen.LogoSplash.route
 }
 

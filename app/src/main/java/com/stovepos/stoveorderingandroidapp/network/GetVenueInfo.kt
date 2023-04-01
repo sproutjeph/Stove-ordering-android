@@ -1,12 +1,12 @@
 package com.stovepos.stoveorderingandroidapp.network
 
-import com.stovepos.stoveorderingandroidapp.data.remote.venue_info_dto.VenueInfoDto
+import androidx.room.withTransaction
+import com.stovepos.stoveorderingandroidapp.data.local.MenuItemDatabase
+import com.stovepos.stoveorderingandroidapp.data.mapper.toVenueInfo
 import com.stovepos.stoveorderingandroidapp.repository.VenueInfoRepository
-import com.stovepos.stoveorderingandroidapp.utils.Resource
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import retrofit2.HttpException
-import java.io.IOException
+import com.stovepos.stoveorderingandroidapp.utils.Constants.VENUE_ID
+import com.stovepos.stoveorderingandroidapp.utils.networkBoundResource
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 
@@ -14,22 +14,32 @@ import javax.inject.Inject
 
 
 class GetVenueInfo @Inject constructor(
-    private val venueInfoRepository: VenueInfoRepository
+    private val venueInfoRepository: VenueInfoRepository,
+    private val db: MenuItemDatabase
 ) {
-
-    operator fun invoke(): Flow<Resource<VenueInfoDto>> = flow {
-
-        try {
-            emit(Resource.Loading<VenueInfoDto>())
-            val venueInfo = venueInfoRepository.getVenueInfo(venueid = 23)
-            emit(Resource.Success<VenueInfoDto>(venueInfo))
+    private val venueInfoDao = db.venueInfoDao
 
 
-        }catch (e: HttpException){
-            emit(Resource.Error<VenueInfoDto>(e.localizedMessage ?: "An unexpected error occurred"))
+    operator fun invoke() = networkBoundResource(
+        query = {
+            venueInfoDao.getVenueInfo()
+        },
+        fetch = {
+            delay(2000)
+            venueInfoRepository.getVenueInfo(venueid = VENUE_ID)
+        },
+        saveFetchResult = { venueInfoData ->
+            db.withTransaction {
+                venueInfoDao.deleteVenueInfo()
+                venueInfoDao.addVenueInfo(
+                    venueInfoData.map {venueInfoItem->
+                        venueInfoItem.toVenueInfo()
+                    }
+                )
+            }
 
-        }catch (e: IOException){
-            emit(Resource.Error<VenueInfoDto>("Couldn't Reach server. check you internet connection."))
+
+
         }
-    }
+    )
 }

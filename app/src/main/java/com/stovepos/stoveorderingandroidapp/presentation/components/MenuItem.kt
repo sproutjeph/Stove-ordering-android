@@ -11,11 +11,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.stovepos.stoveorderingandroidapp.R
 import com.stovepos.stoveorderingandroidapp.ui.theme.HumorousColor
@@ -35,7 +33,7 @@ fun MenuItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal =  16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
             .background(color = MaterialTheme.colorScheme.surface)
             .clickable {
                 onMenuItemClicked()
@@ -44,11 +42,11 @@ fun MenuItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(10.dp)
         ) {
             Surface(
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(130.dp)
                     .weight(1f),
                 shape = RoundedCornerShape(12.dp),
             ) {
@@ -70,7 +68,7 @@ fun MenuItem(
             ) {
                 Text(
                     text = itemName,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.primary
@@ -83,11 +81,25 @@ fun MenuItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Price: $$itemPrice",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Divider(color = MaterialTheme.colorScheme.onSurface)
+                Spacer(modifier = Modifier.height(8.dp))
+                Row{
+                    Text(
+                        text = "Price:",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        text = "$$itemPrice",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                }
+
 
                 Row(
                     modifier = Modifier
@@ -97,21 +109,31 @@ fun MenuItem(
                     Icon(
                         imageVector = Icons.Filled.Star,
                         contentDescription = null,
-                        tint = HumorousColor
+                        tint = HumorousColor,
+                        modifier = Modifier
+                            .size(20.dp)
 
                     )
                     Icon(
                         imageVector = Icons.Filled.Star,
                         contentDescription = null,
-                        tint = HumorousColor
+                        tint = HumorousColor,
+                        modifier = Modifier
+                            .size(20.dp)
 
 
                     )
                     Icon(imageVector = Icons.Filled.Star,
                         contentDescription = null,
-                        tint = HumorousColor
+                        tint = HumorousColor,
+                        modifier = Modifier
+                            .size(20.dp)
                     )
-                    Icon(imageVector = Icons.Filled.Star, contentDescription = null)
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp))
 
                 }
 

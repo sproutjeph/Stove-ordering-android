@@ -1,5 +1,6 @@
 package com.stovepos.stoveorderingandroidapp.presentation.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,11 +12,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.stovepos.stoveorderingandroidapp.data.remote.menu_data_dto.MenuCat
-import com.stovepos.stoveorderingandroidapp.data.remote.menu_data_dto.MenuItem
+import androidx.navigation.NavController
+import com.stovepos.stoveorderingandroidapp.data.local.MenuCatButtonModel
+import com.stovepos.stoveorderingandroidapp.data.local.MenuItemModel
 import com.stovepos.stoveorderingandroidapp.presentation.components.*
 
 const val ALL_MENU_CAT_ID = 1111
+
+data class MenuCategory(
+    val id: Int,
+    val categoryName: String,
+    val items: List<MenuItemModel>
+)
 
 
 //@Preview(showBackground = true)
@@ -26,13 +34,18 @@ fun HomeScreen(
     onSignOutClicked: () -> Unit,
     onDeleteAllClicked: () -> Unit = {},
     onProfileClicked: () -> Unit,
-    navigateToItemDetails: (String) -> Unit ={},
+    navigateToItemDetails: (String) -> Unit,
+    navController: NavController,
     homeViewModel: HomeViewModel = hiltViewModel()
 
 ) {
 
     val menuDataState = homeViewModel.menuDataState.value
-    val venueInfoState = homeViewModel.venueInfoState.value
+    val venueInfo = homeViewModel.venueInfo.collectAsState().value
+
+    val menuItems = homeViewModel.menuItems.collectAsState().value
+    val menCatButtons = homeViewModel.menuCatButtons.collectAsState().value
+
 
 
     var selectedMenuCategory by remember {
@@ -42,20 +55,20 @@ fun HomeScreen(
 
 
 
-    fun menuCategoryData(): List<MenuCategory>? {
-        return menuDataState.menuData?.menuCat?.map { item ->
+
+
+    fun menuCategoryData(): List<MenuCategory> {
+
+        return menCatButtons.map { category ->
             MenuCategory(
-                id = item.menucat,
-                text = item.menu_name,
-                numberOfItems = menuDataState.menuData.menuItems.filter { item2 ->
-                    item2.menucatid == item.menucat
-                }.size,
-                items = menuDataState.menuData.menuItems.filter { item2 ->
-                    item2.menucatid == item.menucat
-                }
+                id = category.menuCat,
+                categoryName = category.menuName,
+                items = menuItems.filter { it.menuCatId == category.menuCat }
             )
         }
     }
+
+    Log.d("MENUS", "HomeScreen: ${menuCategoryData()}")
 
 
 
@@ -63,8 +76,8 @@ fun HomeScreen(
         selectedMenuCategory = categoryId
     }
 
-    val categoryButtons = menuDataState.menuData?.menuCat?.fold(
-        mutableListOf(MenuCat(menu_name = "All Items", ALL_MENU_CAT_ID,  sortorder = 0, ))
+    val categoryButtons = menCatButtons.fold(
+        mutableListOf(MenuCatButtonModel(menuName = "All Items", menuCat = ALL_MENU_CAT_ID,  sortOrder = 0, ))
     ) { acc, curr -> acc.apply { add(curr) } }
 
     NavigationDrawer(
@@ -80,7 +93,7 @@ fun HomeScreen(
                 )
             },
             bottomBar = {
-                StoveBottomAppBar()
+                StoveBottomAppBar(navController = navController)
             }
         ) {contentPadding->
 
@@ -90,7 +103,7 @@ fun HomeScreen(
                 ){
 
                     item{
-                        FlashCard(restaurantName = venueInfoState.venueInfo?.get(0)?.venuename ?: "Restaurant")
+                        FlashCard(restaurantName = if (venueInfo.isNotEmpty()) venueInfo[0].venueName else "Restaurant Name",)
                     }
 
                     if(menuDataState.isLoading){
@@ -108,29 +121,35 @@ fun HomeScreen(
                         }
                     }else{
                         stickyHeader{
-                            categoryButtons?.let {
-                                MenuCategoryButtonRow(
-                                    menuCategories = it,
-                                    selectedMenuCategory = selectedMenuCategory,
-                                    onMenuCategoryButtonClicked = { onMenuCategoryButtonClicked(it) }
-                                )
-                            }
+                            MenuCategoryButtonRow(
+                                menuCategories = categoryButtons,
+                                selectedMenuCategory = selectedMenuCategory,
+                                onMenuCategoryButtonClicked = { onMenuCategoryButtonClicked(it) }
+                            )
 
                         }
 
+                            items(menuCategoryData()){ menuCategory->
 
-                        items(menuCategoryData() as List<MenuCategory>){MenuCategory->
-                            if(MenuCategory.id == selectedMenuCategory || selectedMenuCategory == ALL_MENU_CAT_ID){
-                                MenuCategory.items.forEach {
-                                    MenuItem(
-                                        itemName = it.item_name,
-                                        itemPrice = it.item_price,
-                                        itemDesc = it.item_name,
-                                        onMenuItemClicked = { navigateToItemDetails(it.itemid.toString()) }
-                                    )
+                                if(
+                                    menuCategory.id == selectedMenuCategory ||
+                                    selectedMenuCategory == ALL_MENU_CAT_ID
+                                )
+                                    menuCategory.items.forEach { menuItem ->
+                                        MenuItem(
+                                            itemName = menuItem.itemName,
+                                            itemPrice = menuItem.itemPrice,
+                                            itemDesc = menuItem.itemName,
+                                            onMenuItemClicked = {
+                                                navigateToItemDetails(menuItem.itemId.toString())
+                                            }
+                                        )
+
+                                    }
+
                                 }
 
-                           }
+
                         }
 
                         }
@@ -141,7 +160,7 @@ fun HomeScreen(
                 }
 
         }
-    }
+
 
 
 
@@ -154,7 +173,7 @@ fun HomeScreen(
 
 @Composable
 fun MenuCategoryButtonRow(
-    menuCategories: List<MenuCat> = emptyList(),
+    menuCategories: List<MenuCatButtonModel> = emptyList(),
     selectedMenuCategory: Int = ALL_MENU_CAT_ID,
     onMenuCategoryButtonClicked: (Int) -> Unit
 
@@ -173,13 +192,16 @@ fun MenuCategoryButtonRow(
                 .padding(8.dp)
         ){
 
-
             items(menuCategories){menuCategory->
                 MenuCategoryButton(
-                    text = menuCategory.menu_name,
-                    backgroundColor = if(menuCategory.menucat == selectedMenuCategory) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-                    textColor = if(menuCategory.menucat == selectedMenuCategory) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                    onClick = { onMenuCategoryButtonClicked(menuCategory.menucat) }
+                    text = menuCategory.menuName,
+                    backgroundColor = if(menuCategory.menuCat == selectedMenuCategory){
+                        MaterialTheme.colorScheme.primary
+                    } else MaterialTheme.colorScheme.surface,
+                    textColor = if(menuCategory.menuCat == selectedMenuCategory){
+                        MaterialTheme.colorScheme.onPrimary
+                    } else MaterialTheme.colorScheme.onSurface,
+                    onClick = { onMenuCategoryButtonClicked(menuCategory.menuCat) }
                 )
 
             }
@@ -192,9 +214,3 @@ fun MenuCategoryButtonRow(
 }
 
 
-class MenuCategory(
-    val id: Int,
-    val text: String,
-    val numberOfItems: Int,
-    val items: List<MenuItem>
-)

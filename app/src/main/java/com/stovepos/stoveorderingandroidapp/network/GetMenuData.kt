@@ -1,33 +1,51 @@
 package com.stovepos.stoveorderingandroidapp.network
 
-import android.util.Log
-import com.stovepos.stoveorderingandroidapp.data.remote.menu_data_dto.MenuDataDto
+import androidx.room.withTransaction
+import com.stovepos.stoveorderingandroidapp.data.local.MenuItemDatabase
+import com.stovepos.stoveorderingandroidapp.data.mapper.toMenuCatButton
+import com.stovepos.stoveorderingandroidapp.data.mapper.toMenuItemModel
 import com.stovepos.stoveorderingandroidapp.repository.MenuDataRepository
-import com.stovepos.stoveorderingandroidapp.utils.Resource
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import retrofit2.HttpException
-import java.io.IOException
+import com.stovepos.stoveorderingandroidapp.utils.Constants.VENUE_ID
+import com.stovepos.stoveorderingandroidapp.utils.networkBoundResource
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class GetMenuData @Inject constructor(
-    private val menuDataRepository: MenuDataRepository
+    private val menuDataRepository: MenuDataRepository,
+    private val db: MenuItemDatabase
 ) {
 
-    operator fun invoke(): Flow<Resource<MenuDataDto>> = flow {
+    private val menuItemDao = db.menuItemDao
+    private val menuCatButtonDao = db.menuCatButtonDao
 
-        try {
-            emit(Resource.Loading<MenuDataDto>())
-            val menuData = menuDataRepository.getMenuData(venuid = 23)
-            emit(Resource.Success<MenuDataDto>(menuData))
 
-            Log.d("MENU_DATA", "menu items: ${menuData.menuItems.size}")
+    operator fun invoke() = networkBoundResource(
+        query = {
+            menuItemDao.getAllMenuItem()
+        },
+        fetch = {
+            delay(2000)
+            menuDataRepository.getMenuData(venuid = VENUE_ID)
+        },
+        saveFetchResult = { menuData ->
+            db.withTransaction {
+                menuItemDao.deleteAllMenuItems()
+                menuItemDao.addMenuItem(
+                    menuData.menuItems.map{ menuItem ->
+                        menuItem.toMenuItemModel()
+                    }
+                )
+            }
 
-        }catch (e: HttpException){
-            emit(Resource.Error<MenuDataDto>(e.localizedMessage ?: "An unexpected error occurred"))
+            db.withTransaction {
+                menuCatButtonDao.deleteAllMenuCatButtons()
+                menuCatButtonDao.addMenuCartButton(
+                    menuData.menuCat.map { menuCatButton ->
+                        menuCatButton.toMenuCatButton()
+                    }
+                )
+            }
 
-        }catch (e: IOException){
-            emit(Resource.Error<MenuDataDto>("Couldn't Reach server. check you internet connection."))
         }
-    }
+    )
 }

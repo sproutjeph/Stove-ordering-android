@@ -33,7 +33,8 @@ fun ItemModifierTitle(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
-                .padding(vertical = 8.dp)
+                .padding(vertical = 8.dp),
+            color = Color.Black
         )
     }
 
@@ -55,8 +56,8 @@ fun ItemModifier(
         modifier = Modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = if(modItem.isSelected) Color.White else MaterialTheme.colorScheme.primary,
-            containerColor = if(modItem.isSelected) MaterialTheme.colorScheme.primary else Color.White,
+            contentColor = if(modItem.isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+            containerColor = if(modItem.isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
         ),
 
         shape = RoundedCornerShape(4.dp)

@@ -7,7 +7,7 @@ object Constants {
 
     const val BASE_URL = "https://external.stovepos.com/sys/"
 
-    const val VENUE_ID = "venueid"
+    const val VENUE_ID = 9
 }
 
 

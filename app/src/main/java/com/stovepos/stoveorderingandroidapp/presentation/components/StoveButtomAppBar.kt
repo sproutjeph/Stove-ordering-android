@@ -5,11 +5,14 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import com.stovepos.stoveorderingandroidapp.navigation.Screen
 
 @Composable
 fun StoveBottomAppBar(
+    navController: NavController
 ){
-    val navItems = listOf("Home","Orders", "Cart", "Payment","Profile")
+    val navItems = listOf("Home","Orders", "Venues", "Payment","Profile")
 
 
     BottomAppBar(
@@ -24,14 +27,14 @@ fun StoveBottomAppBar(
             navItems.forEach {navItem->
                 NavigationBarItem(selected = false,
                     onClick = {
-//                        navController.navigate(route = when(navItem){
-//                            "Home" -> ServiceReportScreens.HomeScreen.name
-//                            "Reports" -> ServiceReportScreens.ReportsScreen.name
-//                            "Students" -> ServiceReportScreens.StudentsScreen.name
-//                            "Interests" -> ServiceReportScreens.InterestedPersonsScreen.name
-//                            "Schedule" -> ServiceReportScreens.ScheduleScreen.name
-//                            else -> ServiceReportScreens.HomeScreen.name
-//                        })
+                        navController.navigate(route = when(navItem){
+                            "Home" -> Screen.Home.route
+                            "Orders" -> Screen.Home.route
+                            "Venues" -> Screen.Restaurants.route
+                            "Payment" -> Screen.Home.route
+                            "Profile" -> Screen.Home.route
+                            else -> Screen.Home.route
+                        })
 
 
                     },
@@ -53,7 +56,7 @@ fun StoveBottomAppBar(
                                 contentDescription = null,
                                 modifier = Modifier
                             )
-                            "Cart" -> Icon(imageVector = Icons.Outlined.AddShoppingCart,
+                            "Venues" -> Icon(imageVector = Icons.Outlined.Restaurant,
                                 contentDescription = null,
                                 modifier = Modifier
                             )

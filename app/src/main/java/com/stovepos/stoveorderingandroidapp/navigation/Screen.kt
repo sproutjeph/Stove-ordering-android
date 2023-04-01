@@ -15,4 +15,7 @@ sealed class Screen(val route: String){
         }
     }
 
+    object Restaurants: Screen("restaurants_screen")
+
+
 }

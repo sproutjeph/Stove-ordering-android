@@ -32,15 +32,15 @@ fun ItemDetailsScreen(
 
 ) {
 
-    val menuDataState = homeViewModel.menuDataState.value
+    val menuItems = homeViewModel.menuItems.collectAsState().value
 
-    val selectedItem = menuDataState.menuData?.menuItems?.find { it.itemid == itemId.toInt() }
+    val selectedItem = menuItems?.firstOrNull { it.itemId == itemId.toInt() }
 
     var itemQty by remember { mutableStateOf(1) }
 
-    var itemPrice by remember { mutableStateOf(selectedItem?.item_price?.toDouble()) }
+    var itemPrice by remember { mutableStateOf(selectedItem?.itemPrice?.toDouble()) }
 
-    itemPrice = selectedItem?.item_price?.toDouble()?.times(itemQty)
+    itemPrice = selectedItem?.itemPrice?.toDouble()?.times(itemQty)
 
     fun increaseQty() {
         itemQty++
@@ -58,7 +58,14 @@ fun ItemDetailsScreen(
 
     Scaffold(
         topBar = {},
-        bottomBar = {}
+        bottomBar = {
+            ItemDetailsBottomAppBar(
+                itemPrice =  itemPrice ?: selectedItem?.itemPrice?.toDouble(),
+                itemQty = itemQty,
+                increaseQty = { increaseQty() },
+                decreaseQty = { decreaseQty() }
+            )
+        }
     ) { contentPadding ->
         Column(
             modifier = Modifier
@@ -115,7 +122,7 @@ fun ItemDetailsScreen(
                 CircularProgressIndicator(modifier = Modifier.padding(vertical = 16.dp))
             } else {
                 Text(
-                    text = selectedItem.item_name,
+                    text = selectedItem.itemName,
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -125,7 +132,7 @@ fun ItemDetailsScreen(
                 )
 
                 Text(
-                    text = selectedItem.item_name,
+                    text = selectedItem.itemName,
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
@@ -145,9 +152,11 @@ fun ItemDetailsScreen(
                 ) {
 
                     item {
-                        ItemModifierTitle(
-                            title = selectedItem.itemOptions_json[0].name
-                        )
+                        selectedItem.itemOptionsJson?.get(0)?.let {
+                            ItemModifierTitle(
+                                title = it.name
+                            )
+                        }
                     }
 
                     item {
@@ -156,27 +165,29 @@ fun ItemDetailsScreen(
                     }
 
 
-                    items(selectedItem.itemOptions_json[0].options) { itemOption ->
-                        ItemModifier(
-                            modItem = itemOption
-                        )
+                    selectedItem.itemOptionsJson?.get(0)?.let {
+                        items(it.options) { itemOption ->
+                            ItemModifier(
+                                modItem = itemOption
+                            )
+                        }
                     }
                     item {
                         Spacer(modifier = Modifier.height(4.dp))
 
                     }
 
-                    if (selectedItem.itemOptions_json.size > 1 && selectedItem.itemOptions_json[1].options.isNotEmpty()) {
+                    if (selectedItem.itemOptionsJson?.size!! > 1 && selectedItem.itemOptionsJson?.get(1)?.options?.isNotEmpty() == true) {
                         item {
                             ItemModifierTitle(
-                                title = selectedItem.itemOptions_json[1].name
+                                title = selectedItem.itemOptionsJson[1].name
                             )
                         }
                         item {
                             Spacer(modifier = Modifier.height(4.dp))
 
                         }
-                        items(selectedItem.itemOptions_json[1].options) { itemOption ->
+                        items(selectedItem.itemOptionsJson[1].options) { itemOption ->
                             ItemModifier(
                                 modItem = itemOption
                             )
@@ -185,17 +196,17 @@ fun ItemDetailsScreen(
 
                     }
 
-                    if (selectedItem.itemOptions_json.size > 2) {
+                    if (selectedItem.itemOptionsJson.size > 2) {
                         item {
                             ItemModifierTitle(
-                                title = selectedItem.itemOptions_json[2].name
+                                title = selectedItem.itemOptionsJson[2].name
                             )
                         }
                         item {
                             Spacer(modifier = Modifier.height(4.dp))
 
                         }
-                        items(selectedItem.itemOptions_json[2].options) { itemOption ->
+                        items(selectedItem.itemOptionsJson[2].options) { itemOption ->
                             ItemModifier(
                                 modItem = itemOption
 
@@ -212,20 +223,6 @@ fun ItemDetailsScreen(
 
                     }
 
-                    item {
-                        QtyButtons(
-                            itemQty = itemQty,
-                            increaseQty = { increaseQty() },
-                            decreaseQty = { decreaseQty() }
-                        )
-                    }
-
-
-                    item {
-                        AddToCartButton(
-                            itemPrice = itemPrice ?: selectedItem.item_price.toDouble(),
-                        )
-                    }
                 }
 
 
