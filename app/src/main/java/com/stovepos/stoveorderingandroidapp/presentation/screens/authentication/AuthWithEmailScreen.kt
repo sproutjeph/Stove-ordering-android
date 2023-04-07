@@ -21,7 +21,6 @@ import com.stovepos.stoveorderingandroidapp.R
 import com.stovepos.stoveorderingandroidapp.presentation.components.StoveTopAppBar
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthWithEmailScreen(onBackButtonClicked: () -> Unit) {
     Scaffold(

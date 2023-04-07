@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.stovepos.stoveorderingandroidapp.data.mongo_db.CartItem
 
 @Composable
 fun QtyButtons(
@@ -73,32 +74,7 @@ fun QtyButtons(
 }
 
 
-@Composable
-fun AddToCartButton(
-    itemPrice: Double
-) {
 
-    Button(
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier
-            .padding(end = 16.dp),
-        onClick = { /*TODO*/ }
-    ) {
-
-        Icon(
-            imageVector = Icons.Outlined.AddShoppingCart,
-            contentDescription = null,
-            modifier = Modifier
-        )
-        Spacer(modifier =   Modifier.width(6.dp))
-        Text(text = "\$ $itemPrice",
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-
-    }
-
-}
 
 
 

@@ -15,7 +15,7 @@ class MenuItemsRepositoryImpl (
     }
 
     override suspend fun getMenuItemById(menuItemId: Int): MenuItemModel {
-        return menuItemsDao.getMenuItemById(menuItemId.toString())
+        return menuItemsDao.getMenuItemById(menuItemId)
     }
 
     override fun getAllMenuCatButtons(): Flow<List<MenuCatButtonModel>> {

@@ -25,7 +25,6 @@ import io.realm.kotlin.mongodb.ext.profileAsBsonDocument
 fun NavigationDrawer(
     drawerState: DrawerState,
     onSignOutClicked: () -> Unit,
-    onDeleteAllClicked: () -> Unit,
     content: @Composable () -> Unit
 ) {
     val userData = App.create(Constants.APP_ID).currentUser?.profileAsBsonDocument()

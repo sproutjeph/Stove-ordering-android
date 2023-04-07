@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -26,21 +27,9 @@ fun StoveTopAppBar(
     title: Int,
     isMainScreen: Boolean = true,
     onBackButtonClicked: () -> Unit = {},
+    hasActionIcon:Boolean = false,
+    actionIcon : ImageVector? = null,
 ) {
-
-
-    val showDropDownMenu = remember { mutableStateOf(false) }
-
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-    val items = listOf(Icons.Default.Favorite, Icons.Default.Face, Icons.Default.Email)
-    val selectedItem = remember { mutableStateOf(items[0]) }
-    BackHandler(enabled = drawerState.isOpen) {
-        scope.launch {
-            drawerState.close()
-        }
-    }
-
 
 
     CenterAlignedTopAppBar(
@@ -55,9 +44,7 @@ fun StoveTopAppBar(
             .background(color = Color.LightGray),
         navigationIcon = {
             if(isMainScreen){
-                IconButton(onClick = {
-                    scope.launch { drawerState.open() }
-                }) {
+                IconButton(onClick = {}) {
                     Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu Icon")
 
                 }
@@ -72,10 +59,13 @@ fun StoveTopAppBar(
         },
 
         actions = {
-            IconButton(onClick = { showDropDownMenu.value = !showDropDownMenu.value }) {
-                Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Settings Icon")
+            if(hasActionIcon && actionIcon != null){
+                IconButton(onClick = {  }) {
+                    Icon(imageVector = actionIcon, contentDescription = "Settings Icon")
 
+                }
             }
+
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -89,64 +79,5 @@ fun StoveTopAppBar(
 
 
 
-    DismissibleNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            DismissibleDrawerSheet(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(320.dp)
-            ) {
-
-                Spacer(modifier = Modifier.height(12.dp))
-                Box(modifier = Modifier
-                    .padding(16.dp)
-                    .clickable {
-                        scope.launch { drawerState.close() }
-
-                    }
-                ){
-                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
-                }
-                items.forEach {item ->
-                    NavigationDrawerItem(
-                        label = { Text(text = item.name) },
-                        selected = item == selectedItem.value,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                            selectedItem.value = item
-                        },
-                        modifier = Modifier.padding(horizontal = 12.dp)
-                    )
-
-                }
-
-                Divider()
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "About", style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(text = "Version")
-                    Text(text = "1.0")
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(text = "Support", style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(text = "Copyright 2023 Jephthah Mbah")
-                    Text(text = "Contact: jephthah.mbah@outlook.com")
-                    Text(text = "Phone +2347065406165")
-
-
-                }
-
-
-
-            }
-        },
-        content = {}
-
-    )
 
 }

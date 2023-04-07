@@ -1,23 +1,25 @@
-package com.example.foodapp.features.item_details.components
+package com.stovepos.stoveorderingandroidapp.presentation.screens.item_details
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Preview(showBackground = true)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpecialRequest() {
+
+    var textInput by remember {
+        mutableStateOf("")
+    }
 
     Column(
         modifier = Modifier
@@ -32,8 +34,8 @@ fun SpecialRequest() {
         )
 
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = textInput,
+            onValueChange = {textInput = it},
             placeholder = {
                 Text(
                     text = "Special request are not guaranteed. it may be ignored",

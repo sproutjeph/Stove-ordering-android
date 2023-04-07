@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.outlined.AddShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,31 +19,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.foodapp.features.item_details.components.*
 import com.stovepos.stoveorderingandroidapp.R
-import com.stovepos.stoveorderingandroidapp.presentation.screens.home.HomeViewModel
+import com.stovepos.stoveorderingandroidapp.data.remote.menu_data_dto.Option
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemDetailsScreen(
-    itemId: String,
-    onBackPressed: ()-> Unit,
-    homeViewModel: HomeViewModel = hiltViewModel()
-
+    onBackPressed: () -> Unit,
+    navigateToCartScreen: () -> Unit,
+    itemDetailsViewModel: ItemDetailsViewModel = hiltViewModel()
 ) {
 
-    val menuItems = homeViewModel.menuItems.collectAsState().value
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    val selectedItem = menuItems?.firstOrNull { it.itemId == itemId.toInt() }
-
-    var itemQty by remember { mutableStateOf(1) }
-
+    val selectedItem = itemDetailsViewModel.menuItem.value
     var itemPrice by remember { mutableStateOf(selectedItem?.itemPrice?.toDouble()) }
-
-    itemPrice = selectedItem?.itemPrice?.toDouble()?.times(itemQty)
+    var itemQty by remember { mutableStateOf(1) }
+    var selectedItemMods by remember { mutableStateOf(listOf<Option>()) }
+    var totalItemModsPrice by remember { mutableStateOf(selectedItemMods.sumOf { it.price ?: 0.0 }) }
 
     fun increaseQty() {
         itemQty++
+
     }
 
     fun decreaseQty() {
@@ -53,6 +49,25 @@ fun ItemDetailsScreen(
     }
 
 
+    fun handleItemModSelection(itemMod: Option) {
+
+        val exists = selectedItemMods.find { it.name == itemMod.name }
+
+
+        if (exists == null) {
+            selectedItemMods = selectedItemMods + itemMod
+            totalItemModsPrice += (itemMod.price ?: 0.0)
+
+        } else {
+
+            selectedItemMods = selectedItemMods - itemMod
+            totalItemModsPrice -= (itemMod.price ?: 0.0)
+        }
+
+        itemPrice = selectedItem?.itemPrice?.toDouble()?.plus(totalItemModsPrice)
+
+    }
+
 
 
 
@@ -60,13 +75,23 @@ fun ItemDetailsScreen(
         topBar = {},
         bottomBar = {
             ItemDetailsBottomAppBar(
-                itemPrice =  itemPrice ?: selectedItem?.itemPrice?.toDouble(),
+                itemPrice = itemPrice?.times(itemQty) ?:
+                selectedItem?.itemPrice?.toDouble()?.times(itemQty),
                 itemQty = itemQty,
                 increaseQty = { increaseQty() },
-                decreaseQty = { decreaseQty() }
+                decreaseQty = { decreaseQty() },
+                itemName = selectedItem?.itemName,
+                itemId = selectedItem?.itemId,
+                menuCat = selectedItem?.menuCatId,
+                itemMods = selectedItemMods,
+                navigateToCartScreen = navigateToCartScreen,
+                snackbarHostState = snackbarHostState
+
             )
-        }
-    ) { contentPadding ->
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+
+        ) { contentPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -107,10 +132,11 @@ fun ItemDetailsScreen(
 
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
+                        imageVector = Icons.Outlined.AddShoppingCart,
                         contentDescription = null,
                         modifier = Modifier
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 16.dp)
+                            .clickable { navigateToCartScreen.invoke() },
                         tint = MaterialTheme.colorScheme.primary
 
                     )
@@ -151,33 +177,38 @@ fun ItemDetailsScreen(
                         .padding(horizontal = 16.dp)
                 ) {
 
-                    item {
-                        selectedItem.itemOptionsJson?.get(0)?.let {
+                    if (selectedItem.itemOptionsJson.isEmpty()) {
+                        item {
                             ItemModifierTitle(
-                                title = it.name
+                                title = "No Options",
                             )
                         }
-                    }
 
-                    item {
-                        Spacer(modifier = Modifier.height(4.dp))
+                    } else {
+                        item {
+                            ItemModifierTitle(
+                                title = selectedItem.itemOptionsJson[0].name
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(4.dp))
 
-                    }
-
-
-                    selectedItem.itemOptionsJson?.get(0)?.let {
-                        items(it.options) { itemOption ->
+                        }
+                        items(selectedItem.itemOptionsJson[0].options) { itemOption ->
                             ItemModifier(
-                                modItem = itemOption
-                            )
+                                modItem = itemOption,
+                            ) {
+                                handleItemModSelection(it)
+                            }
                         }
                     }
+
                     item {
                         Spacer(modifier = Modifier.height(4.dp))
 
                     }
 
-                    if (selectedItem.itemOptionsJson?.size!! > 1 && selectedItem.itemOptionsJson?.get(1)?.options?.isNotEmpty() == true) {
+                    if (selectedItem.itemOptionsJson.size > 1 && selectedItem.itemOptionsJson[1].options.isNotEmpty()) {
                         item {
                             ItemModifierTitle(
                                 title = selectedItem.itemOptionsJson[1].name
@@ -190,13 +221,15 @@ fun ItemDetailsScreen(
                         items(selectedItem.itemOptionsJson[1].options) { itemOption ->
                             ItemModifier(
                                 modItem = itemOption
-                            )
+                            ) {
+                                handleItemModSelection(it)
+                            }
                         }
 
 
                     }
 
-                    if (selectedItem.itemOptionsJson.size > 2) {
+                    if (selectedItem.itemOptionsJson.size > 2 && selectedItem.itemOptionsJson[2].options.isNotEmpty()) {
                         item {
                             ItemModifierTitle(
                                 title = selectedItem.itemOptionsJson[2].name
@@ -210,13 +243,33 @@ fun ItemDetailsScreen(
                             ItemModifier(
                                 modItem = itemOption
 
-                            )
+                            ) {
+                                handleItemModSelection(it)
+                            }
                         }
 
                     }
 
+                    if (selectedItem.itemOptionsJson.size > 3 && selectedItem.itemOptionsJson[3].options.isNotEmpty()) {
+                        item {
+                            ItemModifierTitle(
+                                title = selectedItem.itemOptionsJson[3].name
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(4.dp))
 
+                        }
+                        items(selectedItem.itemOptionsJson[3].options) { itemOption ->
+                            ItemModifier(
+                                modItem = itemOption
 
+                            ) {
+                                handleItemModSelection(it)
+                            }
+                        }
+
+                    }
 
                     item {
                         SpecialRequest()

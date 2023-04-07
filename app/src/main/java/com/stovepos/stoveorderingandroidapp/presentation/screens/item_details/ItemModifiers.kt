@@ -11,6 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,32 +48,33 @@ fun ItemModifierTitle(
 fun ItemModifier(
     modifier: Modifier = Modifier
         .padding(vertical = 4.dp),
-    onItemModifierClicked: () -> Unit = {},
     modItem: Option,
+    onClick: (itemMod: Option) -> Unit = {}
     ) {
 
+    val isSelected = remember { mutableStateOf(modItem.isSelected) }
 
     OutlinedButton(
-        onClick={ onItemModifierClicked()},
+        onClick = { isSelected.value = !isSelected.value; onClick(modItem) },
         modifier = Modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = if(modItem.isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-            containerColor = if(modItem.isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            contentColor = if (isSelected.value) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+            containerColor = if (isSelected.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
         ),
 
         shape = RoundedCornerShape(4.dp)
 
 
-
-
     ) {
-        Text(
-            text = modItem.name,
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier
-        )
-        Spacer(modifier =  Modifier.weight(1f))
+        modItem.name?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
         Text(
             text = "+ \$${modItem.price}",
             style = MaterialTheme.typography.titleMedium,

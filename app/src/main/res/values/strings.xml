@@ -27,4 +27,8 @@ Order and enjoy with just a few taps!</string>
     <string name="creeate_account">Create New Account</string>
     <string name="or_continue">or continue with</string>
     <string name="empty">" "</string>
+    <string name="profile_screen_title">Profile</string>
+    <string name="my_addresses_screen_title">Addresses</string>
+    <string name="my_payment_cards">Payment Cards</string>
+    <string name="cart_screen_title">My Cart</string>
 </resources>

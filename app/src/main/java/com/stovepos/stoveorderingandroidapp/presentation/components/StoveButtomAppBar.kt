@@ -31,8 +31,8 @@ fun StoveBottomAppBar(
                             "Home" -> Screen.Home.route
                             "Orders" -> Screen.Home.route
                             "Venues" -> Screen.Restaurants.route
-                            "Payment" -> Screen.Home.route
-                            "Profile" -> Screen.Home.route
+                            "Payment" -> Screen.MyPaymentCards.route
+                            "Profile" -> Screen.Profile.route
                             else -> Screen.Home.route
                         })
 

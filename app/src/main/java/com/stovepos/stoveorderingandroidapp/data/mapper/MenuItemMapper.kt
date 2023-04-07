@@ -51,3 +51,4 @@ fun VenueInfoItem.toVenueInfo():VenueInfoModel{
         venueStatus = venuestatus?: 1,
     )
 }
+

@@ -1,9 +1,12 @@
 package com.stovepos.stoveorderingandroidapp.navigation
 
+import com.stovepos.stoveorderingandroidapp.presentation.screens.my_addresses.MyAddressesScreen
+import com.stovepos.stoveorderingandroidapp.presentation.screens.my_payment_cards.MyPaymentCardsScreen
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
@@ -16,8 +19,11 @@ import com.stovepos.stoveorderingandroidapp.presentation.components.SplashScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.authentication.AuthenticationScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.authentication.AuthWithEmailScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.authentication.AuthenticationViewModel
+import com.stovepos.stoveorderingandroidapp.presentation.screens.cart.CartScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.home.HomeScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.item_details.ItemDetailsScreen
+import com.stovepos.stoveorderingandroidapp.presentation.screens.item_details.ItemDetailsViewModel
+import com.stovepos.stoveorderingandroidapp.presentation.screens.profile.ProfileScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.restaurents.RestaurantsScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.splash_screens.LogoSplashScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.splash_screens.WelcomeSplashScreen
@@ -95,13 +101,19 @@ fun SetupNavigation(
             navigateToItemDetails = {
                 navController.navigate(Screen.ItemDetails.passItemId(itemId = it))
             },
+            navigateToCartScreen = {
+                                   navController.navigate(Screen.Cart.route)
+            },
             navController = navController
         )
 
         itemDetailRoute(
             onBackPressed = {
                 navController.popBackStack()
-            }
+            },
+            navigateToCartScreen = {
+                navController.navigate(Screen.Cart.route)
+            },
         )
 
         restaurantsRoute(
@@ -110,6 +122,38 @@ fun SetupNavigation(
             },
             onRestaurantClick = {
                 navController.navigate(Screen.Home.route)
+            }
+        )
+
+        profileRoute(
+            onBackButtonClicked = {
+                navController.popBackStack()
+            },
+            navigateToAddressScreen = {
+                navController.navigate(Screen.MyAddress.route)
+            },
+            navigateToMyPaymentsCardsScreen = {
+                navController.navigate(Screen.MyPaymentCards.route)
+            }
+
+
+        )
+
+        myAddressRoute(
+            onBackButtonClicked = {
+                navController.popBackStack()
+            }
+        )
+
+        myPaymentsCardsRoute(
+            onBackButtonClicked = {
+                navController.popBackStack()
+            }
+        )
+
+        cartRoute(
+            onBackButtonClicked = {
+                navController.popBackStack()
             }
         )
     }
@@ -130,7 +174,6 @@ fun NavGraphBuilder.logoSplashRoute(
         LogoSplashScreen(
             navigateToNextSplashScreen = navigateToNextSplashScreen,
         )
-
     }
 }
 
@@ -260,6 +303,8 @@ fun NavGraphBuilder.homeRoute(
     navigateToAuth: () -> Unit,
     navController: NavController,
     navigateToItemDetails: (String) -> Unit,
+    navigateToCartScreen: () -> Unit,
+
     ){
     composable(route = Screen.Home.route){
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -276,6 +321,7 @@ fun NavGraphBuilder.homeRoute(
             onSignOutClicked = {
                 signOutDialogOpened = true
             },
+            navigateToCartScreen = navigateToCartScreen,
             navigateToItemDetails = navigateToItemDetails,
             navController = navController
 
@@ -304,7 +350,8 @@ fun NavGraphBuilder.homeRoute(
 
 
 fun NavGraphBuilder.itemDetailRoute(
-    onBackPressed: ()-> Unit
+    onBackPressed: ()-> Unit,
+    navigateToCartScreen: () -> Unit,
 
 ) {
     composable(
@@ -316,8 +363,9 @@ fun NavGraphBuilder.itemDetailRoute(
     ) {
         val itemId = it.arguments?.getString("itemId")
         ItemDetailsScreen (
-                itemId = itemId ?: "null",
-                onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
+            navigateToCartScreen = navigateToCartScreen,
+
         )
 
     }
@@ -338,3 +386,64 @@ fun NavGraphBuilder.restaurantsRoute(
     }
 
 }
+
+fun NavGraphBuilder.profileRoute(
+    onBackButtonClicked: () -> Unit,
+    navigateToAddressScreen: ()-> Unit,
+    navigateToMyPaymentsCardsScreen: ()-> Unit,
+
+    ){
+    composable(route = Screen.Profile.route){
+        ProfileScreen(
+            onBackButtonClicked = onBackButtonClicked,
+            navigateToAddressScreen = navigateToAddressScreen,
+            navigateToMyPaymentsCardsScreen = navigateToMyPaymentsCardsScreen
+        )
+
+    }
+}
+
+fun NavGraphBuilder.myAddressRoute(
+    onBackButtonClicked: () -> Unit,
+
+){
+    composable(route = Screen.MyAddress.route){
+        MyAddressesScreen(
+            onBackButtonClicked = onBackButtonClicked
+        )
+
+    }
+}
+
+fun NavGraphBuilder.myPaymentsCardsRoute(
+    onBackButtonClicked: () -> Unit,
+
+    ){
+    composable(route = Screen.MyPaymentCards.route){
+        MyPaymentCardsScreen(
+            onBackButtonClicked = onBackButtonClicked
+        )
+
+    }
+}
+
+fun NavGraphBuilder.cartRoute(
+    onBackButtonClicked: () -> Unit,
+
+    ){
+    composable(route = Screen.Cart.route){
+        CartScreen(
+            onBackButtonClicked = onBackButtonClicked
+        )
+
+    }
+}
+
+
+
+
+
+
+
+
+

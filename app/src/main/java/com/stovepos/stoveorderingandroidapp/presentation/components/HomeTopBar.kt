@@ -28,7 +28,8 @@ import io.realm.kotlin.mongodb.ext.profileAsBsonDocument
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenTopBar(
-    onProfileClicked: ()-> Unit = {}
+    onProfileClicked: () -> Unit = {},
+    navigateToCartScreen: () -> Unit = {}
 ) {
           val userData = App.create(APP_ID).currentUser?.profileAsBsonDocument()
 
@@ -130,6 +131,7 @@ fun HomeScreenTopBar(
                         shape = RoundedCornerShape(50)
                     )
                     .clickable {
+                               navigateToCartScreen.invoke()
 
                     },
 

@@ -11,8 +11,8 @@ interface MenuItemDao {
     @Query("SELECT * from menu_tbl")
     fun getAllMenuItem(): Flow<List<MenuItemModel>>
 
-    @Query("SELECT * from menu_tbl where id =:id")
-    suspend fun getMenuItemById(id:String): MenuItemModel
+    @Query("SELECT * from menu_tbl where itemId =:itemId")
+    suspend fun getMenuItemById(itemId:Int): MenuItemModel
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addMenuItem(menuItem: List<MenuItemModel>)

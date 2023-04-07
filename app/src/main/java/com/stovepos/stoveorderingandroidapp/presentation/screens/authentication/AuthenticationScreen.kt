@@ -1,7 +1,5 @@
 package com.stovepos.stoveorderingandroidapp.presentation.screens.authentication
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,8 +11,6 @@ import com.stovepos.stoveorderingandroidapp.R
 import com.stovepos.stoveorderingandroidapp.presentation.components.StoveTopAppBar
 import com.stovepos.stoveorderingandroidapp.utils.Constants.CLIENT_ID
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthenticationScreen(
     onBackButtonClicked: () -> Unit,

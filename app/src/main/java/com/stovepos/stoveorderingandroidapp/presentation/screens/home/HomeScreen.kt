@@ -1,10 +1,8 @@
 package com.stovepos.stoveorderingandroidapp.presentation.screens.home
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -27,16 +25,16 @@ data class MenuCategory(
 
 
 //@Preview(showBackground = true)
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn( ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     drawerState: DrawerState,
     onSignOutClicked: () -> Unit,
-    onDeleteAllClicked: () -> Unit = {},
     onProfileClicked: () -> Unit,
     navigateToItemDetails: (String) -> Unit,
     navController: NavController,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    navigateToCartScreen: () -> Unit
 
 ) {
 
@@ -68,9 +66,6 @@ fun HomeScreen(
         }
     }
 
-    Log.d("MENUS", "HomeScreen: ${menuCategoryData()}")
-
-
 
     fun onMenuCategoryButtonClicked(categoryId: Int){
         selectedMenuCategory = categoryId
@@ -83,13 +78,13 @@ fun HomeScreen(
     NavigationDrawer(
         drawerState = drawerState,
         onSignOutClicked = onSignOutClicked,
-        onDeleteAllClicked = onDeleteAllClicked
     ) {
 
         Scaffold(
             topBar = {
                 HomeScreenTopBar(
-                    onProfileClicked = onProfileClicked
+                    onProfileClicked = onProfileClicked,
+                    navigateToCartScreen = navigateToCartScreen
                 )
             },
             bottomBar = {
@@ -99,14 +94,14 @@ fun HomeScreen(
 
                 LazyColumn(
                     modifier = Modifier
-                        .padding(contentPadding)
+                        .padding( contentPadding)
                 ){
 
                     item{
                         FlashCard(restaurantName = if (venueInfo.isNotEmpty()) venueInfo[0].venueName else "Restaurant Name",)
                     }
 
-                    if(menuDataState.isLoading){
+                    if(menuItems.isEmpty()){
                         item{
                             Column(
                                 modifier = Modifier
@@ -121,6 +116,7 @@ fun HomeScreen(
                         }
                     }else{
                         stickyHeader{
+
                             MenuCategoryButtonRow(
                                 menuCategories = categoryButtons,
                                 selectedMenuCategory = selectedMenuCategory,
@@ -130,25 +126,24 @@ fun HomeScreen(
                         }
 
                             items(menuCategoryData()){ menuCategory->
-
                                 if(
                                     menuCategory.id == selectedMenuCategory ||
                                     selectedMenuCategory == ALL_MENU_CAT_ID
-                                )
-                                    menuCategory.items.forEach { menuItem ->
-                                        MenuItem(
-                                            itemName = menuItem.itemName,
-                                            itemPrice = menuItem.itemPrice,
-                                            itemDesc = menuItem.itemName,
-                                            onMenuItemClicked = {
-                                                navigateToItemDetails(menuItem.itemId.toString())
-                                            }
-                                        )
+                                ){
+                                        menuCategory.items.forEach { menuItem ->
 
+                                            MenuItem(
+                                                itemName = menuItem.itemName,
+                                                itemPrice = menuItem.itemPrice,
+                                                itemDesc = menuItem.itemName,
+                                                onMenuItemClicked = {
+                                                    navigateToItemDetails(menuItem.itemId.toString())
+                                                }
+                                            )
+
+                                        }
                                     }
-
                                 }
-
 
                         }
 
@@ -167,10 +162,6 @@ fun HomeScreen(
 
 
 
-
-
-
-
 @Composable
 fun MenuCategoryButtonRow(
     menuCategories: List<MenuCatButtonModel> = emptyList(),
@@ -178,37 +169,26 @@ fun MenuCategoryButtonRow(
     onMenuCategoryButtonClicked: (Int) -> Unit
 
 ) {
-    Surface(
-        modifier = Modifier,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-        tonalElevation = 1.dp
 
-
+    ScrollableTabRow(
+        selectedTabIndex = menuCategories.indexOfFirst { it.menuCat == selectedMenuCategory },
+        edgePadding = 4.dp,
+        indicator = {},
+        divider = {},
     ) {
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ){
-
-            items(menuCategories){menuCategory->
-                MenuCategoryButton(
-                    text = menuCategory.menuName,
-                    backgroundColor = if(menuCategory.menuCat == selectedMenuCategory){
-                        MaterialTheme.colorScheme.primary
-                    } else MaterialTheme.colorScheme.surface,
-                    textColor = if(menuCategory.menuCat == selectedMenuCategory){
-                        MaterialTheme.colorScheme.onPrimary
-                    } else MaterialTheme.colorScheme.onSurface,
-                    onClick = { onMenuCategoryButtonClicked(menuCategory.menuCat) }
-                )
-
-            }
-
+        menuCategories.forEach { menuCategory ->
+            MenuCategoryButton(
+                text = menuCategory.menuName,
+                backgroundColor = if (menuCategory.menuCat == selectedMenuCategory) {
+                    MaterialTheme.colorScheme.primary
+                } else MaterialTheme.colorScheme.surface,
+                textColor = if (menuCategory.menuCat == selectedMenuCategory) {
+                    MaterialTheme.colorScheme.onPrimary
+                } else MaterialTheme.colorScheme.onSurface,
+                onClick = { onMenuCategoryButtonClicked(menuCategory.menuCat) }
+            )
         }
     }
-
 
 
 }

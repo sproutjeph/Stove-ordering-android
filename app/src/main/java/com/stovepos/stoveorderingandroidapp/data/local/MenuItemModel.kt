@@ -14,12 +14,12 @@ data class MenuItemModel(
     val itemOptionsJson: List<ItemOptionsJson>,
     val itemMods: String,
     val itemName: String,
-    val itemPrice: String,
+    var itemPrice: String,
     val itemId: Int,
     val menuCatId: Int,
     val modPrompt: Int,
     val taxRate: String,
-    val itemQty:Int = 1
+    var itemQty:Int = 1
 )
 
 
