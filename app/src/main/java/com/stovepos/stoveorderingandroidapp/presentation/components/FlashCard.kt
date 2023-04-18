@@ -17,64 +17,94 @@ import com.stovepos.stoveorderingandroidapp.R
 import androidx.compose.foundation.layout.*
 
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun FlashCard(
     restaurantName: String = "Restaurant Name",
 
     ) {
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .padding(horizontal =  16.dp, vertical = 8.dp),
-        colors = CardDefaults.cardColors(
-
-        )
-
-
-    ) {
-        Row(
+    Column {
+        Box(
             modifier = Modifier
-                .padding(16.dp),
-        ) {
-
-            Column(
-                modifier = Modifier
-
-            ) {
-                Text(
-                    text = "Welcome To",
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.primary,
-
-                    )
-                Text(
-                    text = restaurantName,
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.primary,
-
-                    )
-                Text(
-                    text ="Menu",
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            Spacer(modifier = Modifier.width(30.dp))
-
-
+                .fillMaxWidth()
+                .height(180.dp)
+                .padding(vertical = 8.dp),
+        ){
             Image(
-                painter = painterResource(id = R.drawable.deliveryman),
+                painter = painterResource(id = R.drawable.restaurant_1),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(100.dp)
+                    .fillMaxSize()
             )
 
+
+
         }
+
+        Text(
+            text = restaurantName,
+            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
+        )
     }
+
+
+
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(150.dp)
+//            .padding(horizontal =  16.dp, vertical = 8.dp),
+//        colors = CardDefaults.cardColors(
+//
+//        )
+//
+//
+//    ) {
+//        Row(
+//            modifier = Modifier
+//                .padding(16.dp),
+//        ) {
+//
+//            Column(
+//                modifier = Modifier
+//
+//            ) {
+//                Text(
+//                    text = "Welcome To",
+//                    fontSize = 16.sp,
+//                    color = MaterialTheme.colorScheme.primary,
+//
+//                    )
+//                Text(
+//                    text = restaurantName,
+//                    fontSize = 16.sp,
+//                    color = MaterialTheme.colorScheme.primary,
+//
+//                    )
+//                Text(
+//                    text ="Menu",
+//                    fontSize = 16.sp,
+//                    color = MaterialTheme.colorScheme.primary
+//                )
+//            }
+//
+//            Spacer(modifier = Modifier.width(30.dp))
+//
+//
+//            Image(
+//                painter = painterResource(id = R.drawable.deliveryman),
+//                contentDescription = null,
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier
+//                    .size(100.dp)
+//            )
+//
+//        }
+//    }
 
 }

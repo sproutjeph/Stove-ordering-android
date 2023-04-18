@@ -1,11 +1,13 @@
 package com.stovepos.stoveorderingandroidapp.presentation.screens.item_details
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.AddShoppingCart
@@ -35,7 +37,12 @@ fun ItemDetailsScreen(
     var itemPrice by remember { mutableStateOf(selectedItem?.itemPrice?.toDouble()) }
     var itemQty by remember { mutableStateOf(1) }
     var selectedItemMods by remember { mutableStateOf(listOf<Option>()) }
-    var totalItemModsPrice by remember { mutableStateOf(selectedItemMods.sumOf { it.price ?: 0.0 }) }
+    var totalItemModsPrice by remember {
+        mutableStateOf(selectedItemMods.sumOf {
+            it.price ?: 0.0
+        })
+    }
+
 
     fun increaseQty() {
         itemQty++
@@ -72,11 +79,10 @@ fun ItemDetailsScreen(
 
 
     Scaffold(
-        topBar = {},
         bottomBar = {
             ItemDetailsBottomAppBar(
-                itemPrice = itemPrice?.times(itemQty) ?:
-                selectedItem?.itemPrice?.toDouble()?.times(itemQty),
+                itemPrice = itemPrice?.times(itemQty) ?: selectedItem?.itemPrice?.toDouble()
+                    ?.times(itemQty),
                 itemQty = itemQty,
                 increaseQty = { increaseQty() },
                 decreaseQty = { decreaseQty() },
@@ -119,27 +125,48 @@ fun ItemDetailsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = null,
+                    Surface(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
+                            .padding(16.dp)
+                            .size(30.dp)
                             .clickable {
                                 onBackPressed()
                             },
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                        shape = RoundedCornerShape(50),
+                        color = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(4.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
 
                     Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        imageVector = Icons.Outlined.AddShoppingCart,
-                        contentDescription = null,
+                    Surface(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .clickable { navigateToCartScreen.invoke() },
-                        tint = MaterialTheme.colorScheme.primary
+                            .padding(16.dp)
+                            .size(30.dp)
+                            .clickable {
+                                navigateToCartScreen()
+                            },
+                        shape = RoundedCornerShape(50),
+                        color = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.AddShoppingCart,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(4.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
 
-                    )
 
                 }
             }
@@ -225,6 +252,15 @@ fun ItemDetailsScreen(
                                 handleItemModSelection(it)
                             }
                         }
+
+//                        if (selectedItem.itemOptionsJson[0].optionType == 3) {
+//                            items(selectedItem.itemOptionsJson[0].options) { itemOption ->
+//                                ItemModifierOptionType3(
+//                                    modItem = itemOption
+//                                )
+//                            }
+//
+//                        }
 
 
                     }

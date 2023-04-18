@@ -31,14 +31,9 @@ class ItemDetailsViewModel @Inject constructor (
         savedStateHandle.get<String>("itemId")?.let {
             getSelectedMenuItemById(it)
         }
-
-
     }
-
-
-
     private fun getSelectedMenuItemById(itemId: String){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             _menuItem.value =   menuItemsRepository.getMenuItemById(itemId.toInt())
         }
     }

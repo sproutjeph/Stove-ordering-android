@@ -25,10 +25,11 @@ fun MenuItem(
     itemName: String = "Food Name",
     itemDesc: String = "",
     itemPrice: String = "Price",
-    onAddToCartClicked: () -> Unit = {},
     onMenuItemClicked: () -> Unit = {}
 
 ) {
+
+
 
     Card(
         modifier = Modifier

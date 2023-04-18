@@ -8,13 +8,31 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.stovepos.stoveorderingandroidapp.R
 import com.stovepos.stoveorderingandroidapp.presentation.components.StoveTopAppBar
+import org.mongodb.kbson.ObjectId
 
 @Composable
-fun CartScreen(onBackButtonClicked: () -> Unit) {
+fun CartScreen(
+    onBackButtonClicked: () -> Unit,
+    navigateToCartItemDetails: (String) -> Unit,
+    onDeleteItem:(id: ObjectId) -> Unit
+
+) {
+
+    val cartScreenViewModel: CartScreenViewModel = viewModel()
+
+    val cartItems by cartScreenViewModel.cartItems
+
+    val totalItems = cartScreenViewModel.numberOfItemInCart
+    val totalPrice = cartScreenViewModel.totalPrice
+
+
+
 
 
     Scaffold(
@@ -43,7 +61,7 @@ fun CartScreen(onBackButtonClicked: () -> Unit) {
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Text(text = "CHECK OUT")
-                    Text(text = "$200.0")
+                    Text(text = "$$totalPrice")
 
                 }
             }
@@ -53,7 +71,14 @@ fun CartScreen(onBackButtonClicked: () -> Unit) {
 
     ) {paddingValues->
 
-       CartScreenContent(paddingValues = paddingValues)
+       CartScreenContent(
+           paddingValues = paddingValues,
+           allCartItems = cartItems,
+           navigateToCartItemDetails = navigateToCartItemDetails,
+           onDeleteItem = onDeleteItem,
+           totalItemsInCart = totalItems,
+           totalPrice = totalPrice
+       )
 
     }
 

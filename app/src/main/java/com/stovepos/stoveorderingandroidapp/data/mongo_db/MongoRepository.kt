@@ -9,7 +9,8 @@ interface MongoRepository {
     fun configureTheRealm()
     fun getAllCartItems(): Flow<AllCartItems>
     suspend fun insertCartItem(cartItem: CartItem):RequestState<CartItem>
-    suspend fun updateCartItem(cartItem: CartItem, mod: OptionRealm):RequestState<CartItem>
+    suspend fun updateCartItem(cartItemId: ObjectId, mod: OptionRealm):RequestState<CartItem>
     suspend fun deleteCartItem(id: ObjectId):RequestState<Boolean>
     suspend fun deleteAllCartItems():RequestState<Boolean>
+    suspend fun getCartItemById(id: ObjectId):Flow<RequestState<CartItem>>
 }

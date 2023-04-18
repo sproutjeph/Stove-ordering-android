@@ -3,6 +3,6 @@ package com.stovepos.stoveorderingandroidapp.data.mongo_db
 sealed class RequestState<out T> {
     object Idle : RequestState<Nothing>()
     object Loading : RequestState<Nothing>()
-    data class Success<T>(val data: T) : RequestState<T>()
+    data class Success<T>(var data: T) : RequestState<T>()
     data class Error(val error: Throwable) : RequestState<Nothing>()
 }

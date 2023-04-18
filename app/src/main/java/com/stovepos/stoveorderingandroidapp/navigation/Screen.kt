@@ -21,6 +21,12 @@ sealed class Screen(val route: String){
 
     object MyPaymentCards: Screen("my_payment_cards_screen")
     object Cart: Screen("cart_screen")
+    object CartItemDetails: Screen("cart_item_details_screen?itemId={itemId}"){
+        fun passItemId(itemId: String): String{
+            return "cart_item_details_screen?itemId=$itemId"
+        }
+    }
+
 
 
 

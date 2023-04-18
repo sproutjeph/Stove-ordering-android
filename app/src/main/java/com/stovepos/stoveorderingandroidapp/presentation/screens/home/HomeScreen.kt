@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,8 +38,11 @@ fun HomeScreen(
     navigateToCartScreen: () -> Unit
 
 ) {
+    val homeScreenState = rememberSaveable { mutableStateOf(BottomNavType.Home) }
 
-    val menuDataState = homeViewModel.menuDataState.value
+
+
+
     val venueInfo = homeViewModel.venueInfo.collectAsState().value
 
     val menuItems = homeViewModel.menuItems.collectAsState().value
@@ -88,7 +92,10 @@ fun HomeScreen(
                 )
             },
             bottomBar = {
-                StoveBottomAppBar(navController = navController)
+                StoveBottomAppBar(
+                    navController = navController,
+                    homeScreenState = homeScreenState
+                )
             }
         ) {contentPadding->
 
@@ -99,6 +106,9 @@ fun HomeScreen(
 
                     item{
                         FlashCard(restaurantName = if (venueInfo.isNotEmpty()) venueInfo[0].venueName else "Restaurant Name",)
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
 
                     if(menuItems.isEmpty()){
@@ -123,6 +133,9 @@ fun HomeScreen(
                                 onMenuCategoryButtonClicked = { onMenuCategoryButtonClicked(it) }
                             )
 
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(8.dp))
                         }
 
                             items(menuCategoryData()){ menuCategory->

@@ -4,9 +4,9 @@ import com.stovepos.stoveorderingandroidapp.presentation.screens.my_addresses.My
 import com.stovepos.stoveorderingandroidapp.presentation.screens.my_payment_cards.MyPaymentCardsScreen
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
@@ -19,10 +19,11 @@ import com.stovepos.stoveorderingandroidapp.presentation.components.SplashScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.authentication.AuthenticationScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.authentication.AuthWithEmailScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.authentication.AuthenticationViewModel
+import com.stovepos.stoveorderingandroidapp.presentation.screens.cart.CartItemDetailsScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.cart.CartScreen
+import com.stovepos.stoveorderingandroidapp.presentation.screens.cart.CartScreenViewModel
 import com.stovepos.stoveorderingandroidapp.presentation.screens.home.HomeScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.item_details.ItemDetailsScreen
-import com.stovepos.stoveorderingandroidapp.presentation.screens.item_details.ItemDetailsViewModel
 import com.stovepos.stoveorderingandroidapp.presentation.screens.profile.ProfileScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.restaurents.RestaurantsScreen
 import com.stovepos.stoveorderingandroidapp.presentation.screens.splash_screens.LogoSplashScreen
@@ -32,11 +33,14 @@ import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.mongodb.kbson.ObjectId
 
 @Composable
 fun SetupNavigation(
     startDestination: String,
     navController: NavHostController,
+    cartScreenViewModel: CartScreenViewModel = viewModel(),
+    widthSizeClass: WindowWidthSizeClass,
 ) {
 
     NavHost(
@@ -54,6 +58,7 @@ fun SetupNavigation(
         welcomeSplashRoute(
             navigateToNextSplashScreen = {
                 navController.navigate(Screen.OrderSplash.route)
+
             }
         )
 
@@ -154,7 +159,18 @@ fun SetupNavigation(
         cartRoute(
             onBackButtonClicked = {
                 navController.popBackStack()
-            }
+            },
+            navigateToCartItemDetails = {
+                navController.navigate(Screen.CartItemDetails.passItemId(itemId = it))
+
+            },
+            onDeleteItem = {cartScreenViewModel.deleteCartItem(it)}
+        )
+
+        cartItemDetailsRoute(
+            onBackButtonClicked = {
+                navController.popBackStack()
+            },
         )
     }
 
@@ -345,6 +361,9 @@ fun NavGraphBuilder.homeRoute(
             }
         )
 
+
+
+
     }
 }
 
@@ -429,12 +448,37 @@ fun NavGraphBuilder.myPaymentsCardsRoute(
 
 fun NavGraphBuilder.cartRoute(
     onBackButtonClicked: () -> Unit,
+    navigateToCartItemDetails: (String) -> Unit,
+    onDeleteItem: (id:ObjectId) -> Unit,
 
-    ){
+){
     composable(route = Screen.Cart.route){
         CartScreen(
-            onBackButtonClicked = onBackButtonClicked
+            onBackButtonClicked = onBackButtonClicked,
+            navigateToCartItemDetails = navigateToCartItemDetails,
+            onDeleteItem = onDeleteItem
+
         )
+
+    }
+}
+
+fun NavGraphBuilder.cartItemDetailsRoute(
+    onBackButtonClicked: () -> Unit,
+
+){
+    composable(
+        route = Screen.CartItemDetails.route,
+        arguments = listOf(navArgument(name = "itemId"){
+            type = NavType.StringType
+
+        })
+    ){
+
+            CartItemDetailsScreen(
+                onBackPressed = onBackButtonClicked
+
+            )
 
     }
 }

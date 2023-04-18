@@ -81,12 +81,12 @@ object  MongoDB : MongoRepository {
     }
 
     override suspend fun updateCartItem(
-        cartItem: CartItem,
+        cartItemId: ObjectId,
         mod: OptionRealm
     ): RequestState<CartItem> {
         return if (user != null) {
             realm.write {
-                val queriedCartItem = query<CartItem>(query = "_id == $0", cartItem._id)
+                val queriedCartItem = query<CartItem>(query = "_id == $0", cartItemId)
                     .first().find()
 
                 if (queriedCartItem != null) {
@@ -145,6 +145,21 @@ object  MongoDB : MongoRepository {
             RequestState.Error(UserNotAuthenticatedException())
 
         }
+    }
+
+    override suspend fun getCartItemById(id: ObjectId): Flow<RequestState<CartItem>>  {
+        return if (user != null) {
+            try{
+                realm.query<CartItem>(query = "_id == $0", id).asFlow().map {
+                    RequestState.Success(data = it.list.first())
+                }
+            }catch (e:Exception){
+                flow { emit(RequestState.Error(e))}
+            }
+        }else{
+            flow {emit(RequestState.Error(UserNotAuthenticatedException()))}
+        }
+
     }
 }
 
